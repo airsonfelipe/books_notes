@@ -7,7 +7,13 @@ file_path = 'data_base.txt'
 def read_text_file(file_path):
     with open(file_path, 'r') as file:
         content = file.read()
+        input_text = input()
+        content_insert = file.write(input_text)
+
     return content
+
+def edit_text_file (file_path):
+
 
 # Exemplo de uso no Streamlit
 st.title('Conteúdo do Arquivo TXT')
