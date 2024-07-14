@@ -19,8 +19,8 @@ def remove_line(file_path, line_to_remove):
                 file.write(line)
 
 # Verifica se estamos na página de edição
-query_params = st.experimental_get_query_params()
-if query_params.get('page') == ['edit']:
+query_params = st.query_params()
+if 'page' in query_params and query_params['page'] == 'edit':
     st.title('Editar Notas')
 
     # Lê o conteúdo atual do arquivo para exibir no Streamlit
@@ -34,11 +34,11 @@ if query_params.get('page') == ['edit']:
             with col2:
                 if st.button('Excluir', key=f'delete_{i}'):
                     remove_line(file_path, line)
-                    st.experimental_rerun()  # Recarrega a página para atualizar a lista de notas
+                    st.rerun()  # Recarrega a página para atualizar a lista de notas
 
     # Botão para voltar à página principal
     if st.button('Voltar'):
         st.experimental_set_query_params()
-        st.experimental_rerun()
+        st.rerun()
 else:
-    st.warning('Acesse esta página através do menu principal.')
+    st.write('Acesse esta página através do menu principal.')

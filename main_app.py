@@ -56,10 +56,10 @@ if selected == "Adicionar Notas":
             new_entry = f"{book_name} - {author}\n{note}\n"
             append_to_file(file_path, new_entry)
             st.success('Nota adicionada com sucesso!')
-            st.experimental_rerun()  # Recarrega a página para atualizar a lista de notas
+            st.rerun()  # Recarrega a página para atualizar a lista de notas
         else:
             st.warning('Por favor, preencha todos os campos para adicionar a nota.')
 
 elif selected == "Editar Notas":
-    st.experimental_set_query_params(page='edit')
-    st.experimental_rerun()
+    st.write('Acesse esta página através do menu principal.')
+
