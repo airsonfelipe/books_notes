@@ -23,7 +23,7 @@ file_content = read_text_file(file_path)
 # Exibe o conteúdo atual no Streamlit
 st.write('Conteúdo do arquivo:')
 for line in file_content:
-    st.code(line, language='text')
+    st.text(line.strip())  # Exibe cada linha, removendo espaços em branco extras
 
 # Entrada para adicionar conteúdo ao arquivo
 st.header('Adicionar ao Arquivo')
