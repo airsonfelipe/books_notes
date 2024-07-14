@@ -6,8 +6,9 @@ file_path = 'data_base.txt'
 # Função para ler o conteúdo do arquivo
 def read_text_file(file_path):
     with open(file_path, 'r') as file:
-        content = file.readlines()  # Lê todas as linhas do arquivo em uma lista
-    return content
+        content = file.read()
+        lines = content.splitlines()  # Separa o conteúdo em linhas
+    return lines
 
 # Função para adicionar conteúdo ao arquivo com nova linha
 def add_text_file(file_path, new_content):
@@ -23,7 +24,7 @@ file_content = read_text_file(file_path)
 # Exibe o conteúdo atual no Streamlit
 st.write('Conteúdo do arquivo:')
 for line in file_content:
-    st.text(line.strip())  # Exibe cada linha, removendo espaços em branco extras
+    st.text(line)  # Exibe cada linha separadamente
 
 # Entrada para adicionar conteúdo ao arquivo
 st.header('Adicionar ao Arquivo')
