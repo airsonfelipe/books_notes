@@ -1,4 +1,5 @@
 import streamlit as st
+import os  # Importe o módulo os para lidar com operações de sistema
 
 # Caminho para o arquivo txt
 file_path = 'output.txt'
