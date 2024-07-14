@@ -13,6 +13,12 @@ def append_to_file(file_path, new_content):
     with open(file_path, 'a') as file:
         file.write(new_content + '\n')
 
+# Função para ler o conteúdo atual do arquivo
+def read_file_content(file_path):
+    with open(file_path, 'r') as file:
+        content = file.read()
+    return content
+
 # Exemplo de uso no Streamlit
 st.title('Manipulação de Arquivos TXT')
 
@@ -21,11 +27,9 @@ initial_content = "Exemplo de conteúdo inicial.\n"
 write_to_file(file_path, initial_content)
 
 # Lê o conteúdo atual do arquivo para exibir no Streamlit
-with open(file_path, 'r') as file:
-    current_content = file.read()
-
+file_content = read_file_content(file_path)
 st.write('Conteúdo atual do arquivo:')
-st.text(current_content)
+st.text(file_content)
 
 # Entrada para adicionar conteúdo ao arquivo
 st.header('Adicionar ao Arquivo')
@@ -36,5 +40,9 @@ if st.button('Adicionar ao Arquivo'):
     if new_content.strip():  # Verifica se há texto a ser adicionado
         append_to_file(file_path, new_content)
         st.success('Texto adicionado com sucesso!')
+        # Força o Streamlit a recarregar o conteúdo do arquivo após adicionar
+        file_content = read_file_content(file_path)
+        st.write('Conteúdo atual do arquivo atualizado:')
+        st.text(file_content)
     else:
         st.warning('Por favor, digite um texto para adicionar.')
