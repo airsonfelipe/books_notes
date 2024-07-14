@@ -9,7 +9,6 @@ def read_text_file(file_path):
         content = file.readlines()  # Lê todas as linhas do arquivo em uma lista
     return content
 
-
 # Função para adicionar conteúdo ao arquivo com nova linha
 def add_text_file(file_path, new_content):
     with open(file_path, 'a') as file:
@@ -23,7 +22,8 @@ file_content = read_text_file(file_path)
 
 # Exibe o conteúdo atual no Streamlit
 st.write('Conteúdo do arquivo:')
-st.text(file_content)  # Exibe cada linha, removendo espaços em branco extras
+for line in file_content:
+    st.text(line.strip())  # Exibe cada linha, removendo espaços em branco extras
 
 # Entrada para adicionar conteúdo ao arquivo
 st.header('Adicionar ao Arquivo')
