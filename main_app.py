@@ -21,43 +21,43 @@ def append_to_file(file_path, new_content):
     with open(file_path, 'a') as file:
         file.write(new_content + '\n')
 
-
 # Inicializa o arquivo se ele não existir
 initialize_file(file_path)
 
-# Exemplo de uso no Streamlit
-st.title('Notas de Livros')
+# Adiciona a navegação entre páginas usando query parameters
+st.sidebar.title('Navegação')
+page = st.sidebar.radio("Ir para", ['Adicionar Notas', 'Editar Notas'])
 
-# Lê o conteúdo atual do arquivo para exibir no Streamlit
-file_content = read_file_content(file_path)
-st.write('Notas atuais:')
-for i, line in enumerate(file_content):
-    if line.strip() and i > 0:  # Ignora a linha inicial e linhas vazias
-        col1, col2 = st.columns([9, 1])
-        with col1:
-            st.text(line.strip())
+if page == 'Adicionar Notas':
+    st.title('Notas de Livros')
 
+    # Lê o conteúdo atual do arquivo para exibir no Streamlit
+    file_content = read_file_content(file_path)
+    st.write('Notas atuais:')
+    for i, line in enumerate(file_content):
+        if line.strip() and i > 0:  # Ignora a linha inicial e linhas vazias
+            col1, col2 = st.columns([9, 1])
+            with col1:
+                st.text(line.strip())
 
-# Entrada para adicionar nota de livro
-st.header('Adicionar Nota de Livro')
+    # Entrada para adicionar nota de livro
+    st.header('Adicionar Nota de Livro')
 
-# Campos para inserir nome do livro, autor e nota
-book_name = st.text_input('Nome do Livro')
-author = st.text_input('Autor')
-note = st.text_area('Nota (máximo 200 caracteres)', max_chars=200)
+    # Campos para inserir nome do livro, autor e nota
+    book_name = st.text_input('Nome do Livro')
+    author = st.text_input('Autor')
+    note = st.text_area('Nota (máximo 200 caracteres)', max_chars=200)
 
-# Botão para adicionar a nota de livro
-if st.button('Adicionar Nota'):
-    if book_name.strip() and author.strip() and note.strip():  # Verifica se há texto a ser adicionado
-        new_entry = f"{book_name} - {author}\n{note}\n"
-        append_to_file(file_path, new_entry)
-        st.success('Nota adicionada com sucesso!')
-        st.experimental_rerun()  # Recarrega a página para atualizar a lista de notas
-    else:
-        st.warning('Por favor, preencha todos os campos para adicionar a nota.')
-        
+    # Botão para adicionar a nota de livro
+    if st.button('Adicionar Nota'):
+        if book_name.strip() and author.strip() and note.strip():  # Verifica se há texto a ser adicionado
+            new_entry = f"{book_name} - {author}\n{note}\n"
+            append_to_file(file_path, new_entry)
+            st.success('Nota adicionada com sucesso!')
+            st.experimental_rerun()  # Recarrega a página para atualizar a lista de notas
+        else:
+            st.warning('Por favor, preencha todos os campos para adicionar a nota.')
 
-# IR PARA EDICAO DE NOTAS
-
-st.header('Editar Notas')
-st.link_button('Clique aqui para editar', '/edit_notes.py')
+elif page == 'Editar Notas':
+    st.experimental_set_query_params(page='edit')
+    st.experimental_rerun()
