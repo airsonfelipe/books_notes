@@ -11,7 +11,7 @@ def read_text_file(file_path):
 
 # Função para adicionar conteúdo ao arquivo com nova linha
 def add_text_file(file_path, new_content):
-    with open(file_path, 'w') as file:
+    with open(file_path, 'a') as file:
         file.write(new_content + '\n')
 
 # Exemplo de uso no Streamlit
