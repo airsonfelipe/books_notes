@@ -21,13 +21,6 @@ def append_to_file(file_path, new_content):
     with open(file_path, 'a') as file:
         file.write(new_content + '\n')
 
-# Função para remover uma linha específica do arquivo
-def remove_line(file_path, line_to_remove):
-    lines = read_file_content(file_path)
-    with open(file_path, 'w') as file:
-        for line in lines:
-            if line.strip() != line_to_remove.strip():
-                file.write(line)
 
 # Inicializa o arquivo se ele não existir
 initialize_file(file_path)
@@ -43,10 +36,7 @@ for i, line in enumerate(file_content):
         col1, col2 = st.columns([9, 1])
         with col1:
             st.text(line.strip())
-        with col2:
-            if st.button('Excluir', key=f'delete_{i}'):
-                remove_line(file_path, line)
-                st.experimental_rerun()  # Recarrega a página para atualizar a lista de notas
+
 
 # Entrada para adicionar nota de livro
 st.header('Adicionar Nota de Livro')
@@ -65,3 +55,9 @@ if st.button('Adicionar Nota'):
         st.experimental_rerun()  # Recarrega a página para atualizar a lista de notas
     else:
         st.warning('Por favor, preencha todos os campos para adicionar a nota.')
+        
+
+# IR PARA EDICAO DE NOTAS
+
+st.header('Editar Notas')
+st.link_button('Clique aqui para editar', '/edit_notes.py')
