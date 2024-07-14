@@ -23,7 +23,7 @@ file_content = read_text_file(file_path)
 # Exibe o conteúdo atual no Streamlit
 st.write('Conteúdo do arquivo:')
 for line in file_content:
-    st.markdown(f"- {line.strip()}")  # Exibe cada linha como um item de lista
+    st.text(line.strip())  # Exibe cada linha separadamente
 
 # Entrada para adicionar conteúdo ao arquivo
 st.header('Adicionar ao Arquivo')
@@ -34,5 +34,7 @@ if st.button('Adicionar ao Arquivo'):
     if new_content.strip():  # Verifica se há texto a ser adicionado
         add_text_file(file_path, new_content)
         st.success('Texto adicionado com sucesso!')
+        # Atualiza o conteúdo exibido para incluir o texto recém-adicionado
+        file_content.append(new_content.strip())
     else:
         st.warning('Por favor, digite um texto para adicionar.')
