@@ -39,16 +39,21 @@ st.text(file_content)
 
 # Entrada para adicionar nota de livro
 st.header('Adicionar Nota de Livro')
-book_note = st.text_area('Digite a nota de livro que deseja adicionar:', '')
+
+# Campos para inserir nome do livro, autor e nota
+book_name = st.text_input('Nome do Livro')
+author = st.text_input('Autor')
+note = st.text_area('Nota (máximo 200 caracteres)', max_chars=200)
 
 # Botão para adicionar a nota de livro
 if st.button('Adicionar Nota'):
-    if book_note.strip():  # Verifica se há texto a ser adicionado
-        append_to_file(file_path, book_note)
+    if book_name.strip() and author.strip() and note.strip():  # Verifica se há texto a ser adicionado
+        new_entry = f"{book_name} - {author}\n{note}"
+        append_to_file(file_path, new_entry)
         st.success('Nota adicionada com sucesso!')
         # Força o Streamlit a recarregar o conteúdo do arquivo após adicionar
         file_content = read_file_content(file_path)
         st.write('Notas atualizadas:')
         st.text(file_content)
     else:
-        st.warning('Por favor, digite uma nota para adicionar.')
+        st.warning('Por favor, preencha todos os campos para adicionar a nota.')
