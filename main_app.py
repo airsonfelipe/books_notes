@@ -19,30 +19,35 @@ def read_file_content(file_path):
         content = file.read()
     return content
 
-# Exemplo de uso no Streamlit
-st.title('Manipulação de Arquivos TXT')
+# Função para inicializar o arquivo se não existir
+def initialize_file(file_path):
+    if not os.path.exists(file_path):
+        with open(file_path, 'w') as file:
+            file.write("Notas de Livros\n")
 
-# Escreve ou sobrescreve o arquivo inicialmente
-initial_content = "Exemplo de conteúdo inicial.\n"
-write_to_file(file_path, initial_content)
+# Inicializa o arquivo se ele não existir
+initialize_file(file_path)
+
+# Exemplo de uso no Streamlit
+st.title('Notas de Livros')
 
 # Lê o conteúdo atual do arquivo para exibir no Streamlit
 file_content = read_file_content(file_path)
-st.write('Conteúdo atual do arquivo:')
+st.write('Notas atuais:')
 st.text(file_content)
 
-# Entrada para adicionar conteúdo ao arquivo
-st.header('Adicionar ao Arquivo')
-new_content = st.text_area('Digite o texto que deseja adicionar:', '')
+# Entrada para adicionar nota de livro
+st.header('Adicionar Nota de Livro')
+book_note = st.text_area('Digite a nota de livro que deseja adicionar:', '')
 
-# Botão para adicionar o novo conteúdo
-if st.button('Adicionar ao Arquivo'):
-    if new_content.strip():  # Verifica se há texto a ser adicionado
-        append_to_file(file_path, new_content)
-        st.success('Texto adicionado com sucesso!')
+# Botão para adicionar a nota de livro
+if st.button('Adicionar Nota'):
+    if book_note.strip():  # Verifica se há texto a ser adicionado
+        append_to_file(file_path, book_note)
+        st.success('Nota adicionada com sucesso!')
         # Força o Streamlit a recarregar o conteúdo do arquivo após adicionar
         file_content = read_file_content(file_path)
-        st.write('Conteúdo atual do arquivo atualizado:')
+        st.write('Notas atualizadas:')
         st.text(file_content)
     else:
-        st.warning('Por favor, digite um texto para adicionar.')
+        st.warning('Por favor, digite uma nota para adicionar.')
