@@ -4,15 +4,11 @@ import os
 # Caminho para o arquivo txt
 file_path = 'output.txt'
 
-# Função para escrever no arquivo (cria um novo arquivo ou sobrescreve o existente)
-def write_to_file(file_path, content):
-    with open(file_path, 'w') as file:
-        file.write(content)
-
-# Função para adicionar conteúdo ao arquivo (adiciona novas linhas sem apagar o existente)
-def append_to_file(file_path, new_content):
-    with open(file_path, 'a') as file:
-        file.write(new_content + '\n')
+# Função para inicializar o arquivo se não existir
+def initialize_file(file_path):
+    if not os.path.exists(file_path):
+        with open(file_path, 'w') as file:
+            file.write("Notas de Livros\n")
 
 # Função para ler o conteúdo atual do arquivo
 def read_file_content(file_path):
@@ -20,11 +16,10 @@ def read_file_content(file_path):
         content = file.readlines()  # Lê todas as linhas do arquivo em uma lista
     return content
 
-# Função para inicializar o arquivo se não existir
-def initialize_file(file_path):
-    if not os.path.exists(file_path):
-        with open(file_path, 'w') as file:
-            file.write("Notas de Livros\n")
+# Função para adicionar conteúdo ao arquivo (adiciona novas linhas sem apagar o existente)
+def append_to_file(file_path, new_content):
+    with open(file_path, 'a') as file:
+        file.write(new_content + '\n')
 
 # Função para remover uma linha específica do arquivo
 def remove_line(file_path, line_to_remove):
@@ -44,7 +39,7 @@ st.title('Notas de Livros')
 file_content = read_file_content(file_path)
 st.write('Notas atuais:')
 for i, line in enumerate(file_content):
-    if line.strip():  # Ignora linhas vazias
+    if line.strip() and i > 0:  # Ignora a linha inicial e linhas vazias
         col1, col2 = st.columns([9, 1])
         with col1:
             st.text(line.strip())
