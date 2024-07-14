@@ -5,13 +5,13 @@ file_path = 'data_base.txt'
 
 # Função para ler o conteúdo do arquivo
 def read_text_file(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, 'w') as file:
         content = file.read()
     return content
 
 # Função para adicionar conteúdo ao arquivo com nova linha
 def add_text_file(file_path, new_content):
-    with open(file_path, 'a') as file:
+    with open(file_path, 'w') as file:
         file.write(new_content + '\n')
 
 # Exemplo de uso no Streamlit
