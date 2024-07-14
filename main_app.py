@@ -9,7 +9,7 @@ def read_text_file(file_path):
         content = file.read()
     return content
 
-# Função para adicionar conteúdo ao arquivo
+# Função para adicionar conteúdo ao arquivo com nova linha
 def add_text_file(file_path, new_content):
     with open(file_path, 'a') as file:
         file.write(new_content + '\n')
@@ -35,4 +35,3 @@ if st.button('Adicionar ao Arquivo'):
         st.success('Texto adicionado com sucesso!')
     else:
         st.warning('Por favor, digite um texto para adicionar.')
-
