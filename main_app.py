@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_option_menu import option_menu
 import os
 
 # Caminho para o arquivo txt
@@ -24,11 +25,12 @@ def append_to_file(file_path, new_content):
 # Inicializa o arquivo se ele não existir
 initialize_file(file_path)
 
-# Adiciona a navegação entre páginas usando query parameters
-st.sidebar.title('Navegação')
-page = st.sidebar.radio("Ir para", ['Adicionar Notas', 'Editar Notas'])
+# Cria a barra de navegação
+with st.sidebar:
+    selected = option_menu("Menu", ["Adicionar Notas", "Editar Notas"],
+        icons=['book', 'edit'], menu_icon="cast", default_index=0)
 
-if page == 'Adicionar Notas':
+if selected == "Adicionar Notas":
     st.title('Notas de Livros')
 
     # Lê o conteúdo atual do arquivo para exibir no Streamlit
@@ -58,6 +60,6 @@ if page == 'Adicionar Notas':
         else:
             st.warning('Por favor, preencha todos os campos para adicionar a nota.')
 
-elif page == 'Editar Notas':
+elif selected == "Editar Notas":
     st.experimental_set_query_params(page='edit')
     st.experimental_rerun()

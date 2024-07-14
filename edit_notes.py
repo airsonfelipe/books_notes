@@ -40,3 +40,5 @@ if query_params.get('page') == ['edit']:
     if st.button('Voltar'):
         st.experimental_set_query_params()
         st.experimental_rerun()
+else:
+    st.warning('Acesse esta página através do menu principal.')
