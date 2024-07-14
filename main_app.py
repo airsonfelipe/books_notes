@@ -5,7 +5,7 @@ file_path = 'data_base.txt'
 
 # Função para ler o conteúdo do arquivo
 def read_text_file(file_path):
-    with open(file_path, 'w') as file:
+    with open(file_path, 'r') as file:
         content = file.read()
     return content
 
