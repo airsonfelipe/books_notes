@@ -1,5 +1,4 @@
 import streamlit as st
-from streamlit_option_menu import option_menu
 import os
 
 # Caminho para o arquivo txt
@@ -22,44 +21,70 @@ def append_to_file(file_path, new_content):
     with open(file_path, 'a') as file:
         file.write(new_content + '\n')
 
-# Inicializa o arquivo se ele não existir
-initialize_file(file_path)
+# Função para remover uma linha específica do arquivo
+def remove_line(file_path, line_to_remove):
+    lines = read_file_content(file_path)
+    with open(file_path, 'w') as file:
+        for line in lines:
+            if line.strip() != line_to_remove.strip():
+                file.write(line)
 
-# Cria a barra de navegação
-with st.sidebar:
-    selected = option_menu("Menu", ["Adicionar Notas", "Editar Notas"],
-        icons=['book', 'edit'], menu_icon="cast", default_index=0)
+# Função principal do aplicativo
+def main():
+    initialize_file(file_path)
 
-if selected == "Adicionar Notas":
-    st.title('Notas de Livros')
+    # Cria a barra de navegação
+    with st.sidebar:
+        selected = st.selectbox("Menu", ["Adicionar Notas", "Editar Notas"], index=0)
 
-    # Lê o conteúdo atual do arquivo para exibir no Streamlit
-    file_content = read_file_content(file_path)
-    st.write('Notas atuais:')
-    for i, line in enumerate(file_content):
-        if line.strip() and i > 0:  # Ignora a linha inicial e linhas vazias
-            col1, col2 = st.columns([9, 1])
-            with col1:
-                st.text(line.strip())
+    if selected == "Adicionar Notas":
+        st.title('Notas de Livros')
 
-    # Entrada para adicionar nota de livro
-    st.header('Adicionar Nota de Livro')
+        # Lê o conteúdo atual do arquivo para exibir no Streamlit
+        file_content = read_file_content(file_path)
+        st.write('Notas atuais:')
+        for i, line in enumerate(file_content):
+            if line.strip() and i > 0:  # Ignora a linha inicial e linhas vazias
+                col1, col2 = st.columns([9, 1])
+                with col1:
+                    st.text(line.strip())
 
-    # Campos para inserir nome do livro, autor e nota
-    book_name = st.text_input('Nome do Livro')
-    author = st.text_input('Autor')
-    note = st.text_area('Nota (máximo 200 caracteres)', max_chars=200)
+        # Entrada para adicionar nota de livro
+        st.header('Adicionar Nota de Livro')
 
-    # Botão para adicionar a nota de livro
-    if st.button('Adicionar Nota'):
-        if book_name.strip() and author.strip() and note.strip():  # Verifica se há texto a ser adicionado
-            new_entry = f"{book_name} - {author}\n{note}\n"
-            append_to_file(file_path, new_entry)
-            st.success('Nota adicionada com sucesso!')
-            st.rerun()  # Recarrega a página para atualizar a lista de notas
-        else:
-            st.warning('Por favor, preencha todos os campos para adicionar a nota.')
+        # Campos para inserir nome do livro, autor e nota
+        book_name = st.text_input('Nome do Livro')
+        author = st.text_input('Autor')
+        note = st.text_area('Nota (máximo 200 caracteres)', max_chars=200)
 
-elif selected == "Editar Notas":
-    st.write('Acesse esta página através do menu principal.')
+        # Botão para adicionar a nota de livro
+        if st.button('Adicionar Nota'):
+            if book_name.strip() and author.strip() and note.strip():  # Verifica se há texto a ser adicionado
+                new_entry = f"{book_name} - {author}\n{note}\n"
+                append_to_file(file_path, new_entry)
+                st.success('Nota adicionada com sucesso!')
+            else:
+                st.warning('Por favor, preencha todos os campos para adicionar a nota.')
 
+    elif selected == "Editar Notas":
+        st.title('Editar Notas')
+
+        # Lê o conteúdo atual do arquivo para exibir no Streamlit
+        file_content = read_file_content(file_path)
+        st.write('Notas atuais:')
+        for i, line in enumerate(file_content):
+            if line.strip() and i > 0:  # Ignora a linha inicial e linhas vazias
+                col1, col2 = st.columns([9, 1])
+                with col1:
+                    st.text(line.strip())
+                with col2:
+                    if st.button('Excluir', key=f'delete_{i}'):
+                        remove_line(file_path, line)
+                        st.success('Nota excluída com sucesso!')
+
+    else:
+        st.warning('Selecione uma opção no menu.')
+
+# Executa a função principal
+if __name__ == '__main__':
+    main()
