@@ -50,6 +50,15 @@ def remove_line(file_path, line_to_remove):
 def main():
     initialize_file(file_path)
 
+    # Verifica e renova o token, se necessário
+    if oauth.token:
+        try:
+            oauth.refresh_token(token_url)
+        except Exception as e:
+            st.error(f'Ocorreu um erro ao tentar renovar o token: {e}')
+            st.write(f'Por favor, faça login novamente [aqui]({authorization_url})')
+            return
+
     # Gera a URL de autorização
     authorization_url, state = oauth.create_authorization_url(authorization_base_url)
 
