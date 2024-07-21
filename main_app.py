@@ -47,6 +47,7 @@ def main():
 
     # Gera a URL de autorização
     authorization_url, state = oauth.create_authorization_url(authorization_base_url)
+    st.image('static/logo.png')
     st.write(f'Por favor, faça login [aqui]({authorization_url})')
 
     # Obtém os parâmetros da URL
