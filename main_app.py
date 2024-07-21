@@ -17,11 +17,13 @@ oauth = OAuth2Session(
 authorization_base_url = 'https://accounts.google.com/o/oauth2/auth'
 token_url = 'https://accounts.google.com/o/oauth2/token'
 
+
 # Função para inicializar o arquivo se não existir
 def initialize_file(file_path):
     if not os.path.exists(file_path):
         with open(file_path, 'w') as file:
             file.write("Notas de Livros\n")
+
 
 # Função para ler o conteúdo atual do arquivo
 def read_file_content(file_path):
@@ -29,10 +31,12 @@ def read_file_content(file_path):
         content = file.readlines()
     return content
 
+
 # Função para adicionar conteúdo ao arquivo (adiciona novas linhas sem apagar o existente)
 def append_to_file(file_path, new_content):
     with open(file_path, 'a') as file:
         file.write(new_content + '\n')
+
 
 # Função para remover uma linha específica do arquivo
 def remove_line(file_path, line_to_remove):
@@ -42,17 +46,20 @@ def remove_line(file_path, line_to_remove):
             if line.strip() != line_to_remove.strip():
                 file.write(line)
 
+
 def main():
     initialize_file(file_path)
 
-    # Mostra a URL de autorização
+    # Gera a URL de autorização
     authorization_url, state = oauth.create_authorization_url(authorization_base_url)
+
+    # Exibe a URL de autorização
     st.write(f'Por favor, faça login [aqui]({authorization_url})')
 
-    # URL de callback
-    query_params = st.query_params
+    # Obtém os parâmetros da URL
+    query_params = st.experimental_get_query_params()
     if 'code' in query_params:
-        code = query_params['code']
+        code = query_params['code'][0]  # Obtemos o primeiro valor da lista de parâmetros
         token = oauth.fetch_token(token_url, authorization_response=f'{config.REDIRECT_URI}?code={code}')
         user_info = oauth.get('https://www.googleapis.com/oauth2/v3/userinfo').json()
         st.write('Usuário autenticado:')
@@ -129,6 +136,7 @@ def main():
             st.warning('Selecione uma opção no menu.')
     else:
         st.warning('Faça login para acessar as notas.')
+
 
 if __name__ == '__main__':
     main()
