@@ -3,6 +3,9 @@ from authlib.integrations.requests_client import OAuth2Session
 import config
 import os
 
+# Caminho para o arquivo txt
+file_path = 'output.txt'
+
 # Configuração do OAuth
 oauth = OAuth2Session(
     client_id=config.CLIENT_ID,
@@ -13,12 +16,6 @@ oauth = OAuth2Session(
 
 authorization_base_url = 'https://accounts.google.com/o/oauth2/auth'
 token_url = 'https://accounts.google.com/o/oauth2/token'
-
-# Função para obter o caminho do arquivo específico do usuário
-def get_user_file_path(email):
-    # Substitua caracteres inválidos por _
-    sanitized_email = email.replace('@', '_').replace('.', '_')
-    return f'{sanitized_email}_output.txt'
 
 # Função para inicializar o arquivo se não existir
 def initialize_file(file_path):
@@ -46,8 +43,11 @@ def remove_line(file_path, line_to_remove):
                 file.write(line)
 
 def main():
+    initialize_file(file_path)
+
     # Gera a URL de autorização
     authorization_url, state = oauth.create_authorization_url(authorization_base_url)
+    st.image('static/logo.png', width=200)
     st.write(f'Por favor, faça login [aqui]({authorization_url})')
 
     # Obtém os parâmetros da URL
@@ -65,10 +65,6 @@ def main():
             st.markdown(f"**Nome:** {user_info.get('name')}")
             st.markdown(f"**Email:** {user_info.get('email')}")
             st.markdown(f"**Nome de usuário:** {user_info.get('given_name')} {user_info.get('family_name')}")
-
-            # Obtém o caminho do arquivo específico do usuário
-            user_file_path = get_user_file_path(user_info.get('email'))
-            initialize_file(user_file_path)
 
             # Cria a barra de navegação
             with st.sidebar:
@@ -89,12 +85,12 @@ def main():
                 if st.button('Adicionar Nota'):
                     if book_name.strip() and author.strip() and note.strip():
                         # Determina o próximo ID com base nas entradas atuais no arquivo
-                        current_notes = [line for line in read_file_content(user_file_path) if
+                        current_notes = [line for line in read_file_content(file_path) if
                                          line.strip() and line.split(" - ")[0].isdigit()]
                         next_id = len(current_notes) + 1
 
                         new_entry = f"{next_id} - {book_name}\n{author}\n{note}\n"
-                        append_to_file(user_file_path, new_entry)
+                        append_to_file(file_path, new_entry)
                         st.success('Nota adicionada com sucesso!')
                     else:
                         st.warning('Por favor, preencha todos os campos para adicionar a nota.')
@@ -103,7 +99,7 @@ def main():
                 st.title('Notas de Livros')
 
                 # Lê o conteúdo atual do arquivo para exibir no Streamlit
-                file_content = read_file_content(user_file_path)
+                file_content = read_file_content(file_path)
                 st.write('Notas atuais:')
                 for i, line in enumerate(file_content):
                     if line.strip() and i > 0:
@@ -113,7 +109,7 @@ def main():
                 st.title('Editar Notas')
 
                 # Lê o conteúdo atual do arquivo para exibir no Streamlit
-                file_content = read_file_content(user_file_path)
+                file_content = read_file_content(file_path)
                 st.write('Notas atuais:')
                 for i, line in enumerate(file_content):
                     if line.strip() and i > 0:
@@ -122,20 +118,20 @@ def main():
                             st.text(line.strip())
                         with col2:
                             if st.button('Excluir', key=f'delete_{i}'):
-                                remove_line(user_file_path, line)
+                                remove_line(file_path, line)
                                 st.success('Nota excluída com sucesso!')
 
             elif selected == "Download":
                 st.title('Download das Notas')
 
                 # Lê o conteúdo do arquivo
-                file_content = read_file_content(user_file_path)
+                file_content = read_file_content(file_path)
 
                 # Junta as linhas em uma única string
                 file_content_str = ''.join(file_content)
 
                 # Botão de download
-                st.download_button(label='Baixar Notas', data=file_content_str, file_name=f'{user_file_path}', mime='text/plain')
+                st.download_button(label='Baixar Notas', data=file_content_str, file_name='output.txt', mime='text/plain')
 
             else:
                 st.warning('Selecione uma opção no menu.')
