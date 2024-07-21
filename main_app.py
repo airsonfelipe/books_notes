@@ -50,8 +50,11 @@ def remove_line(file_path, line_to_remove):
 def main():
     initialize_file(file_path)
 
+    # Obtém o token armazenado
+    token = oauth.token
+
     # Verifica e renova o token, se necessário
-    if oauth.token:
+    if token:
         try:
             oauth.refresh_token(token_url)
         except Exception as e:
@@ -72,6 +75,7 @@ def main():
 
         try:
             token = oauth.fetch_token(token_url, authorization_response=f'{config.REDIRECT_URI}?code={code}')
+            st.session_state['oauth_token'] = token
         except Exception as e:
             st.error(f'Ocorreu um erro ao tentar obter o token: {e}')
             st.write(f'Por favor, tente fazer login novamente [aqui]({authorization_url})')
@@ -79,6 +83,7 @@ def main():
 
         try:
             user_info = oauth.get('https://www.googleapis.com/oauth2/v3/userinfo').json()
+            st.session_state['user_info'] = user_info
         except Exception as e:
             st.error(f'Ocorreu um erro ao tentar obter as informações do usuário: {e}')
             st.write(f'Por favor, tente fazer login novamente [aqui]({authorization_url})')
