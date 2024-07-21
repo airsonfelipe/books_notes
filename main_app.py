@@ -5,13 +5,13 @@ import firebase_admin
 from firebase_admin import credentials, auth
 import streamlit_authenticator as stauth
 
-# Inicializar Firebase
-cred = credentials.Certificate("path/to/your/firebase_credentials.json")
-firebase_admin.initialize_app(cred)
+# Inicializar Firebase se não já estiver inicializado
+if not firebase_admin._apps:
+    cred = credentials.Certificate("notaslivros.json")
+    firebase_admin.initialize_app(cred)
 
 # Caminho para o arquivo txt
 file_path = 'output.txt'
-
 
 # Função para inicializar o arquivo se não existir
 def initialize_file(file_path):
@@ -19,19 +19,16 @@ def initialize_file(file_path):
         with open(file_path, 'w') as file:
             file.write("Notas de Livros\n")
 
-
 # Função para ler o conteúdo atual do arquivo
 def read_file_content(file_path):
     with open(file_path, 'r') as file:
         content = file.readlines()  # Lê todas as linhas do arquivo em uma lista
     return content
 
-
 # Função para adicionar conteúdo ao arquivo (adiciona novas linhas sem apagar o existente)
 def append_to_file(file_path, new_content):
     with open(file_path, 'a') as file:
         file.write(new_content + '\n')
-
 
 # Função para remover uma linha específica do arquivo
 def remove_line(file_path, line_to_remove):
@@ -40,7 +37,6 @@ def remove_line(file_path, line_to_remove):
         for line in lines:
             if line.strip() != line_to_remove.strip():
                 file.write(line)
-
 
 # Função principal do aplicativo
 def main():
@@ -58,7 +54,8 @@ def main():
 
     authenticator = stauth.Authenticate(credentials, "notas_de_livros", "abcdef", cookie_expiry_days=30)
 
-    name, authentication_status, username = authenticator.login("Login", "main")
+    # Atualização para usar o novo parâmetro 'fields' corretamente
+    name, authentication_status, username = authenticator.login(fields=["username", "password"])
 
     if authentication_status:
         st.write(f"Bem-vindo, {name}!")
@@ -114,7 +111,6 @@ def main():
         st.error('Usuário ou senha incorretos')
     elif authentication_status == None:
         st.warning('Por favor, insira seu usuário e senha')
-
 
 if __name__ == '__main__':
     main()
