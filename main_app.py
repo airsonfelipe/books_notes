@@ -1,5 +1,13 @@
 import streamlit as st
 import os
+import json
+import firebase_admin
+from firebase_admin import credentials, auth
+import streamlit_authenticator as stauth
+
+# Inicializar Firebase
+cred = credentials.Certificate("path/to/your/firebase_credentials.json")
+firebase_admin.initialize_app(cred)
 
 # Caminho para o arquivo txt
 file_path = 'output.txt'
@@ -38,77 +46,75 @@ def remove_line(file_path, line_to_remove):
 def main():
     initialize_file(file_path)
 
-    # Cria a barra de navegação
-    with st.sidebar:
-        selected = st.selectbox("Menu", ["Adicionar Notas", "Ver Notas", "Editar Notas", "Download"], index=0)
+    st.title("Sistema de Notas de Livros")
 
-    if selected == "Adicionar Notas":
-        st.title('Notas de Livros')
+    # Autenticação
+    credentials = {
+        "usernames": {
+            "user1": {"name": "User One", "password": "password"},
+            "user2": {"name": "User Two", "password": "password"}
+        }
+    }
 
-        # Entrada para adicionar nota de livro
-        st.header('Adicionar Nota de Livro')
+    authenticator = stauth.Authenticate(credentials, "notas_de_livros", "abcdef", cookie_expiry_days=30)
 
-        # Campos para inserir nome do livro, autor e nota
-        book_name = st.text_input('Nome do Livro')
-        author = st.text_input('Autor')
-        note = st.text_area('Nota (máximo 200 caracteres)', max_chars=200)
+    name, authentication_status, username = authenticator.login("Login", "main")
 
-        # Botão para adicionar a nota de livro
-        if st.button('Adicionar Nota'):
-            if book_name.strip() and author.strip() and note.strip():  # Verifica se há texto a ser adicionado
-                # Determina o próximo ID com base nas entradas atuais no arquivo
-                current_notes = [line for line in read_file_content(file_path) if
-                                 line.strip() and line.split(" - ")[0].isdigit()]
-                next_id = len(current_notes) + 1
+    if authentication_status:
+        st.write(f"Bem-vindo, {name}!")
+        with st.sidebar:
+            selected = st.selectbox("Menu", ["Adicionar Notas", "Ver Notas", "Editar Notas", "Download"], index=0)
 
-                new_entry = f"{next_id} - {book_name}\n{author}\n{note}\n"
-                append_to_file(file_path, new_entry)
-                st.success('Nota adicionada com sucesso!')
-            else:
-                st.warning('Por favor, preencha todos os campos para adicionar a nota.')
+        if selected == "Adicionar Notas":
+            st.header('Adicionar Nota de Livro')
+            book_name = st.text_input('Nome do Livro')
+            author = st.text_input('Autor')
+            note = st.text_area('Nota (máximo 200 caracteres)', max_chars=200)
+            if st.button('Adicionar Nota'):
+                if book_name.strip() and author.strip() and note.strip():
+                    current_notes = [line for line in read_file_content(file_path) if
+                                     line.strip() and line.split(" - ")[0].isdigit()]
+                    next_id = len(current_notes) + 1
+                    new_entry = f"{next_id} - {book_name}\n{author}\n{note}\n"
+                    append_to_file(file_path, new_entry)
+                    st.success('Nota adicionada com sucesso!')
+                else:
+                    st.warning('Por favor, preencha todos os campos para adicionar a nota.')
 
-    elif selected == "Ver Notas":
-        st.title('Notas de Livros')
-
-        # Lê o conteúdo atual do arquivo para exibir no Streamlit
-        file_content = read_file_content(file_path)
-        st.write('Notas atuais:')
-        for i, line in enumerate(file_content):
-            if line.strip() and i > 0:  # Ignora a linha inicial e linhas vazias
-                st.text(line.strip())
-
-    elif selected == "Editar Notas":
-        st.title('Editar Notas')
-
-        # Lê o conteúdo atual do arquivo para exibir no Streamlit
-        file_content = read_file_content(file_path)
-        st.write('Notas atuais:')
-        for i, line in enumerate(file_content):
-            if line.strip() and i > 0:  # Ignora a linha inicial e linhas vazias
-                col1, col2 = st.columns([9, 1])
-                with col1:
+        elif selected == "Ver Notas":
+            st.write('Notas atuais:')
+            file_content = read_file_content(file_path)
+            for i, line in enumerate(file_content):
+                if line.strip() and i > 0:
                     st.text(line.strip())
-                with col2:
-                    if st.button('Excluir', key=f'delete_{i}'):
-                        remove_line(file_path, line)
-                        st.success('Nota excluída com sucesso!')
 
-    elif selected == "Download":
-        st.title('Download das Notas')
+        elif selected == "Editar Notas":
+            st.write('Notas atuais:')
+            file_content = read_file_content(file_path)
+            for i, line in enumerate(file_content):
+                if line.strip() and i > 0:
+                    col1, col2 = st.columns([9, 1])
+                    with col1:
+                        st.text(line.strip())
+                    with col2:
+                        if st.button('Excluir', key=f'delete_{i}'):
+                            remove_line(file_path, line)
+                            st.success('Nota excluída com sucesso!')
 
-        # Lê o conteúdo do arquivo
-        file_content = read_file_content(file_path)
+        elif selected == "Download":
+            st.write('Download das Notas')
+            file_content = read_file_content(file_path)
+            file_content_str = ''.join(file_content)
+            st.download_button(label='Baixar Notas', data=file_content_str, file_name='output.txt', mime='text/plain')
 
-        # Junta as linhas em uma única string
-        file_content_str = ''.join(file_content)
+        else:
+            st.warning('Selecione uma opção no menu.')
 
-        # Botão de download
-        st.download_button(label='Baixar Notas', data=file_content_str, file_name='output.txt', mime='text/plain')
+    elif authentication_status == False:
+        st.error('Usuário ou senha incorretos')
+    elif authentication_status == None:
+        st.warning('Por favor, insira seu usuário e senha')
 
-    else:
-        st.warning('Selecione uma opção no menu.')
 
-
-# Executa a função principal
 if __name__ == '__main__':
     main()
