@@ -1,4 +1,4 @@
 # config.py
-CLIENT_ID = '339685563922-bj9fdhemnnhe86qcchm304pdkp7c57cc.apps.googleusercontent.com'
-CLIENT_SECRET = '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'
+CLIENT_ID = ''
+CLIENT_SECRET = ''
 REDIRECT_URI = 'https://booksnotes.streamlit.app/'  # Verifique se corresponde ao URI no Google Developer Console
